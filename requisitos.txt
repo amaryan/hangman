@@ -13,15 +13,15 @@ Objeto Peli (
     Pistas [] *se sacan numeradas
 )
 
-Restablecer vidas al iniciar el juego 
+Restablecer vidas al iniciar el juego //Done
 
-Contar longitud de la palabra y pintar tantas rallas como caracteres.
-Aparecer letra una vez accertada.
+Contar longitud de la palabra y pintar tantas rallas como caracteres. //Done
+Aparecer letra una vez accertada. //Done 
 
 Mas cosas 
-Lim 3 minutos por partida
-Poner cuenta atrás en el html (en principio segundo más alante min + segs)
-Pantalla de game over 
+Lim 3 minutos por partida //Done
+Poner cuenta atrás en el html (en principio segundo más alante min + segs) //Done
+Pantalla de game over //Done
 
 //////////////////////// HASTA AQUÍ EL MÍNIMO ///////////////////////////////////////////////////////////
 

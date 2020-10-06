@@ -21,15 +21,24 @@ var filmsObject = {
 //Guardamos el valor de la pelicula random en una variable para que siempre sea la misma
 var film,cron;
 var time = 180;
-
-
+var array_letters = [];
+var stateObj={
+    lifes: 10,
+    time: 20,
+    film: chooseFilm(),
+    letters: []
+         //indexOf para saber la pos de la letra
+    ,
+    
+};
+var press_letter= [];
 //Comienza el juego
 startGame();    
-function restartStateObj(){
-    var stateObj={
+function restartGame(){
+    stateObj={
         lifes: 10,
-        time: 180,
-        film: film,
+        time: 20,
+        film: chooseFilm(),
         letters: []
              //indexOf para saber la pos de la letra
         ,
@@ -55,9 +64,17 @@ function startGame(){
         console.log("pausa!");
         if(document.getElementById("pauseButton").innerHTML==="Pause"){
             document.getElementById("pauseButton").innerHTML="Play";
+            stopTimer();
             saveData();
+            var keybLetters = document.getElementsByClassName("key");
+            for (let i = 0; i < keybLetters.length; i++) {
+                    keybLetters[i].disabled = true;
+                   
+                };
         }else{
+            keyboardOn();
             document.getElementById("pauseButton").innerHTML="Pause";
+            disablePressKey();
             loadData();
         }        
         
@@ -72,11 +89,14 @@ function startGame(){
     printLifes(lifes);
     
 }
-function loadData(){
+/*function loadData(){
     var letters_container = document.getElementsByClassName("letter");
-    var array_letters=stateObj.letters;
+    var letters_saved=stateObj.letters;
+    console.log(letters_saved);
+    var letter;
     for(var i = 0; i<letters_container.length; i++){
-        var letter = array_letters.pop();
+        letter = letters_saved[i];
+        console.log(letter);
         if(letters_container[i]===letter){
             letters_container[i].classList.remove("unrevealed");
             letters_container[i].classList.add("revealed");
@@ -84,17 +104,39 @@ function loadData(){
             continue;
         }
     }
+}*/
+function loadData(){
+    var loadObj = JSON.parse(localStorage.getItem("stateObj"));
+    console.log(loadObj);
+    if(loadObj!=null){
+        setTimer(parseInt(loadObj.time));
+        this.lifes = loadObj.lifes;
+        var filmLoad = stateObj.film;
+        var letters_container = document.getElementsByClassName("letters");
+        var letters_saved=stateObj.letters;
+        for(var i = 0; i<letters_container.length; i++){        
+            var letter = letters_saved[i];
+            if(letters_container[i]===letter){
+                letters_container[i].classList.remove("unrevealed");
+                letters_container[i].classList.add("revealed");
+            }else{
+                continue;
+            }
+        }
+    }
 }
 
 function saveData(){
     //Vidas
     stateObj.lifes = lifes;
-    clearInterval(cron);
     //Tiempo
     stateObj.time=document.getElementById("seconds").innerHTML;
     //Pelicula
     stateObj.film = film;
     //Letras
+    stateObj.letters = array_letters;
+    console.log(array_letters);
+    localStorage.setItem("stateObj", JSON.stringify(stateObj));
 
 }
 function restartGame(){
@@ -112,6 +154,7 @@ function restartGame(){
     numberOfTiles(film);
     stopTimer();
     setTimer();
+    this.countAciertos=0;
     //canvas();
     var div = document.getElementById("showHint");
     div.innerHTML = "";
@@ -141,6 +184,7 @@ function stopTimer(){
     clearInterval(cron);
 }
 function gameOver(){
+    stopTimer();
     console.log("Perdiste wei");
     var result = document.getElementById("resultGame");
     result.innerHTML ="YOU LOSE!!<br/> Try Again";
@@ -200,15 +244,16 @@ function keyboardOn() {
 var countAciertos = 0;
 function compareLetter(letter){
     var letters_container = document.getElementsByClassName("letter");
+    press_letter.push(letter);
         if(film.includes(letter.toLowerCase())){
             for (let j = 0; j < letters_container.length; j++) {
                if(letters_container[j].innerHTML == letter.toLowerCase()){
                     letters_container[j].classList.remove("unrevealed");
                     letters_container[j].classList.add("revealed");
                     //Guardar en el objeto letter las letras que coincidan.
-                    stateObj.letters.push(letters_container[j].innerHTML);
+                    array_letters.push(letters_container[j].innerHTML);
                     console.log("GUARDANDO.. "+ letters_container[j].innerHTML);
-                    console.log("SE HA GUARDADO.. "+ stateObj.letters);
+                    console.log("SE HA GUARDADO.. "+ array_letters);
                     //Guardamos simplemente las letras y con indexof cogemos la posicion de la letras guardadas e imprimimos estas
                     countAciertos += 1;
                }
@@ -231,8 +276,21 @@ function loseLife(lifes){
     }
     return lifes;    
 }
+function disablePressKey(){
+    var keybLetters = document.getElementsByClassName("key");
+    for (let i = 0; i < keybLetters.length; i++) {
+       for (let j = 0; j < press_letter.length; j++) {
+          console.log(keybLetters,press_letter);
 
+          if(keybLetters[i].innerHTML==press_letter[j]){
+              keybLetters[i].disabled=true;
+          }
+       }
+        
+    }
+}
 function victory(){
+    stopTimer();
     var result = document.getElementById("resultGame");
     result.innerHTML="YOU WIN!!";
     result.classList.add("winner");
